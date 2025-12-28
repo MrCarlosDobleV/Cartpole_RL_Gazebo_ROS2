@@ -20,8 +20,7 @@ cartpole_project/
 ├── cartpole_description/     # CartPole model (SDF, model.config, hooks)
 ├── cartpole_gazebo/          # Gazebo systems, plugins, and worlds
 ├── LICENSE
-├── README.md
-└── template_workspace.yaml
+└── README.md
 ```
 
 ---
@@ -79,7 +78,7 @@ sudo apt install \
 ```bash
 mkdir -p ~/cartpole_ws/src
 cd ~/cartpole_ws/src
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/MrCarlosDobleV/Cartpole_RL_Gazebo_ROS2.git
 ```
 
 ---
