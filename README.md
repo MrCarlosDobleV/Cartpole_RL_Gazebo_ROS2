@@ -127,26 +127,16 @@ This will:
 Apply a force to the cart (prismatic joint `cart_slide`):
 
 ```bash
-gz topic -t /model/cartpole/joint/cart_slide/cmd_force \
-  -m gz.msgs.Double \
-  -p "data: 5.0"
+ign topic -t /cart_force -m ignition.msgs.Double -p "data: 1"
 ```
 
 Apply force in the opposite direction:
 
 ```bash
-gz topic -t /model/cartpole/joint/cart_slide/cmd_force \
-  -m gz.msgs.Double \
-  -p "data: -5.0"
+ign topic -t /cart_force -m ignition.msgs.Double -p "data: -1"
 ```
 
----
 
-## Notes
-
-- The CartPole cart has joint limits; once reached, applied force will have no effect.
-- Very small numerical values (e.g. `1e-14`) in joint states are normal floating-point noise.
-- Joint effort values may appear as zero; Gazebo does not always report applied effort.
 
 ---
 
