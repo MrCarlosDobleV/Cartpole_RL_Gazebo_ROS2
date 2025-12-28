@@ -1,76 +1,166 @@
-# ros_gz_project_template
-A template project integrating ROS 2 and Gazebo simulator.
+# CartPole ROS 2 + Gazebo Sim Project
 
-## Included packages
+This repository contains a **CartPole simulation integrated with ROS 2 and Gazebo Sim (Fortress)**.  
+It is based on the official `ros_gz_project_template`, adapted for a **custom CartPole system** suitable for **control and reinforcement learning experiments**.
 
-* `ros_gz_example_description` - holds the sdf description of the simulated system and any other assets.
+The project provides:
+- A CartPole model defined in SDF
+- A Gazebo world to simulate the system
+- ROS 2 launch files and bridges
+- A clean workspace structure following ROS 2 best practices
 
-* `ros_gz_example_gazebo` - holds gazebo specific code and configurations. Namely this is where systems end up.
+---
 
-* `ros_gz_example_application` - holds ros2 specific code and configurations.
+## Repository structure
 
-* `ros_gz_example_bringup` - holds launch files and high level utilities.
+```text
+cartpole_project/
+├── cartpole_application/     # ROS 2 application-level code (controllers, RL nodes, etc.)
+├── cartpole_bringup/         # Launch files and bridge configurations
+├── cartpole_description/     # CartPole model (SDF, model.config, hooks)
+├── cartpole_gazebo/          # Gazebo systems, plugins, and worlds
+├── LICENSE
+├── README.md
+└── template_workspace.yaml
+```
 
+---
 
-## Install
+## Package overview
 
-For using the template with Gazebo Fortress switch to the `fortress` branch of this repository, otherwise use the default branch `main` for Gazebo Harmonic onwards.
+- **cartpole_description**  
+  Contains the CartPole SDF model and related assets.
 
-### Requirements
+- **cartpole_gazebo**  
+  Contains Gazebo-specific code, systems, and the simulation world.
 
-1. Choose a ROS and Gazebo combination https://gazebosim.org/docs/latest/ros_installation
-   Note: If you're using a specific and unsupported Gazebo version with ROS 2, you might need to set the `GZ_VERSION` environment variable, for example:
+- **cartpole_bringup**  
+  Contains launch files and ROS ↔ Gazebo bridge configuration.
 
-    ```bash
-    export GZ_VERSION=fortress
-    ```
+- **cartpole_application**  
+  Contains ROS 2 nodes for control, experimentation, or reinforcement learning.
 
-1. Install necessary tools
+---
 
-    ```bash
-    sudo apt install python3-vcstool python3-colcon-common-extensions git wget
-    ```
+## Requirements
 
-### Use as template
-Directly `Use this template` and create your project repository on Github.
+This project is tested with:
 
-Or start by creating a workspace and cloning the template repository:
+- **ROS 2** compatible with Gazebo Fortress
+- **Gazebo Sim Fortress**
 
-   ```bash
-   mkdir -p ~/template_ws/src
-   cd ~/template_ws/src
-   wget https://raw.githubusercontent.com/gazebosim/ros_gz_project_template/main/template_workspace.yaml
-   vcs import < template_workspace.yaml
-   ```
+Refer to the official compatibility table:  
+https://gazebosim.org/docs/latest/ros_installation
+
+If needed, explicitly set the Gazebo version:
+
+```bash
+export GZ_VERSION=fortress
+```
+
+---
+
+## System dependencies
+
+```bash
+sudo apt install \
+  python3-vcstool \
+  python3-colcon-common-extensions \
+  python3-rosdep \
+  git
+```
+
+---
+
+## Installation
+
+### 1. Create a workspace and clone the repository
+
+```bash
+mkdir -p ~/cartpole_ws/src
+cd ~/cartpole_ws/src
+git clone <YOUR_REPOSITORY_URL>
+```
+
+---
+
+### 2. Install ROS dependencies
+
+```bash
+cd ~/cartpole_ws
+source /opt/ros/<ROS_DISTRO>/setup.bash
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -i -y
+```
+
+---
+
+## Build
+
+```bash
+cd ~/cartpole_ws
+source /opt/ros/<ROS_DISTRO>/setup.bash
+colcon build
+source install/setup.bash
+```
+
+---
 
 ## Usage
 
-1. Install dependencies
+### Launch the CartPole simulation
 
-    ```bash
-    cd ~/template_ws
-    source /opt/ros/<ROS_DISTRO>/setup.bash
-    sudo rosdep init
-    rosdep update
-    rosdep install --from-paths src --ignore-src -r -i -y --rosdistro <ROS_DISTRO>
-    ```
+```bash
+ros2 launch cartpole_bringup cartpole.launch.py
+```
 
-1. Build the project
+This will:
+- Start Gazebo Sim Fortress
+- Load the CartPole world and model
+- Start the ROS ↔ Gazebo bridge
 
-    ```bash
-    colcon build --cmake-args -DBUILD_TESTING=ON
-    ```
+---
 
-1. Source the workspace
+## Controlling the CartPole (Gazebo CLI)
 
-    ```bash
-    . ~/template_ws/install/setup.sh
-    ```
+Apply a force to the cart (prismatic joint `cart_slide`):
 
-1. Launch the simulation
+```bash
+gz topic -t /model/cartpole/joint/cart_slide/cmd_force \
+  -m gz.msgs.Double \
+  -p "data: 5.0"
+```
 
-    ```bash
-    ros2 launch ros_gz_example_bringup diff_drive.launch.py
-    ```
+Apply force in the opposite direction:
 
-For a more detailed guide on using this template see [documentation](https://gazebosim.org/docs/latest/ros_gz_project_template_guide).
+```bash
+gz topic -t /model/cartpole/joint/cart_slide/cmd_force \
+  -m gz.msgs.Double \
+  -p "data: -5.0"
+```
+
+---
+
+## Notes
+
+- The CartPole cart has joint limits; once reached, applied force will have no effect.
+- Very small numerical values (e.g. `1e-14`) in joint states are normal floating-point noise.
+- Joint effort values may appear as zero; Gazebo does not always report applied effort.
+
+---
+
+## Future work
+
+Planned extensions include:
+- Integration with `gazebo_ros2_control`
+- Effort-based ROS controllers
+- Reinforcement learning environments (Gym-style API)
+- Automated evaluation and logging
+
+---
+
+## License
+
+This project is licensed under the **Apache License 2.0**.  
+See the `LICENSE` file for details.
