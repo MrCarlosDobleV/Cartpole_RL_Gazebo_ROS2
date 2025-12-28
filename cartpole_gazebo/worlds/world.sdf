@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <world name="cartpole_world">
+
+    <!-- Core systems (same style as diff_drive, legacy-compatible) -->
+    <plugin
+      filename="ignition-gazebo-physics-system"
+      name="ignition::gazebo::systems::Physics"/>
+    <plugin
+      filename="ignition-gazebo-scene-broadcaster-system"
+      name="ignition::gazebo::systems::SceneBroadcaster"/>
+    <plugin
+      filename="ignition-gazebo-user-commands-system"
+      name="ignition::gazebo::systems::UserCommands"/>
+
+    <!-- Light -->
+    <light name="sun" type="directional">
+      <pose>0 0 10 0 0 0</pose>
+      <direction>-0.5 0.1 -1</direction>
+    </light>
+
+
+    <!-- CartPole (IMPORTANT: include wrapped in model) -->
+    <model name="cartpole">
+      <pose>0 0 0 0 0 0</pose>
+
+      <include merge="true">
+        <uri>/home/mypc/cartpole_ws/install/cartpole_description/share/cartpole_description/models/cartpole</uri>
+      </include>
+
+      <!-- Joint states (for your bridge test) -->
+      <plugin
+        filename="ignition-gazebo-joint-state-publisher-system"
+        name="ignition::gazebo::systems::JointStatePublisher"/>
+    </model>
+
+  </world>
+</sdf>

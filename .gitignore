@@ -1,0 +1,69 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+############################
+# ROS 2 / Colcon
+############################
+build/
+install/
+log/
+
+############################
+# Gazebo / Ignition
+############################
+~/.gz/
+~/.ignition/
+
+############################
+# Python
+############################
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+############################
+# Editors / OS
+############################
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+############################
+# Generated / runtime files
+############################
+latest
+latest_list

@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <model name="cartpole">
+
+    <!-- ================= SLIDER (FIXED TO WORLD) ================= -->
+    <link name="rail">
+      <pose>0 0 1.0 0 0 0</pose>
+      <inertial>
+        <mass>1.0</mass>
+        <inertia>
+          <ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name="vis">
+        <geometry>
+          <box><size>4 0.1 0.1</size></box>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="rail_fixed" type="fixed">
+      <parent>world</parent>
+      <child>rail</child>
+    </joint>
+
+    <!-- ================= CART ================= -->
+    <link name="cart">
+      <pose>0 0 1.0 0 0 0</pose>
+      <inertial>
+        <mass>2.0</mass>
+        <inertia>
+          <ixx>0.05</ixx><iyy>0.05</iyy><izz>0.05</izz>
+        </inertia>
+      </inertial>
+
+      <visual name="vis">
+        <geometry>
+          <box><size>0.4 0.3 0.2</size></box>
+        </geometry>
+      </visual>
+
+      <collision name="col">
+        <geometry>
+          <box><size>0.4 0.3 0.2</size></box>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- PRISMATIC JOINT (THIS **WILL MOVE** WITH CONTROLLER) -->
+    <joint name="cart_slide" type="prismatic">
+      <parent>rail</parent>
+      <child>cart</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-2</lower>
+          <upper>2</upper>
+          <effort>500</effort>
+          <velocity>5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.0</damping>
+          <friction>0.0</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ================= POLE ================= -->
+    <link name="pole">
+      <!-- Pole frame located at the hinge, relative to the cart -->
+      <pose relative_to="cart">0 0.175 0 0 0 0</pose>
+
+      <inertial>
+        <!-- COM is L/2 below the hinge -->
+        <pose>0 0 -0.5 0 0 0</pose>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.025</ixx>
+          <iyy>0.025</iyy>
+          <izz>0.000125</izz>
+        </inertia>
+      </inertial>
+
+      <visual name="vis">
+        <!-- Shift geometry DOWN so the top touches the hinge -->
+        <pose>0 0 -0.5 0 0 0</pose>
+        <geometry>
+          <box><size>0.05 0.05 1.0</size></box>
+        </geometry>
+        <material>
+          <ambient>0.8 0.1 0.1 1</ambient>
+          <diffuse>0.8 0.1 0.1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+
+      <collision name="col">
+        <pose>0 0 -0.5 0 0 0</pose>
+        <geometry>
+          <box><size>0.05 0.05 1.0</size></box>
+        </geometry>
+      </collision>
+    </link>
+
+
+    <!-- ================= POLE HINGE ================= -->
+    <joint name="pole_hinge" type="revolute">
+      <parent>cart</parent>
+      <child>pole</child>
+
+      <!-- Joint frame coincides with pole link frame -->
+      <pose>0 0 0 0 0 0</pose>
+
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <effort>100</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+          <friction>0.0</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+
+    <!-- ================= JOINT CONTROLLER (REQUIRED FOR PRISMATIC) ================= -->
+    <plugin
+      filename="libignition-gazebo-joint-controller-system.so"
+      name="ignition::gazebo::systems::JointController">
+      <joint_name>cart_slide</joint_name>
+      <use_force>true</use_force>
+      <topic>/cart_force</topic>
+    </plugin>
+
+    <!-- ================= JOINT STATE PUBLISHER ================= -->
+    <plugin
+      filename="libignition-gazebo-joint-state-publisher-system.so"
+      name="ignition::gazebo::systems::JointStatePublisher">
+    </plugin>
+
+
+  </model>
+</sdf>
