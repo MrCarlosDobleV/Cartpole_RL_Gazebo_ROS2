@@ -16,7 +16,11 @@ class GazeboCartPoleEnv(gym.Env):
         self.max_vel = 5.0
         self.max_steps = 1000
         self.step_count = 0
-        self.cart_limit = 2.4
+
+        self.rail_soft_limit = 1.8     # start penalizing here
+        self.rail_hard_limit = 2.0     # physical rail
+        self.rail_penalty_scale = 20.0 # strength
+
 
         # ---- Action space (continuous) ----
         self.action_space = gym.spaces.Box(
@@ -87,8 +91,15 @@ class GazeboCartPoleEnv(gym.Env):
         reward -= 0.001 * vel**2       # energy penalty
 
 
+        # ---- Rail penalty (soft, no termination) ----
+        rail_violation = max(0.0, abs(x) - self.rail_soft_limit)
+        rail_penalty = self.rail_penalty_scale * rail_violation**2
+
+        reward -= rail_penalty
+
+
         # ---- Termination ----
-        terminated = abs(x) > self.cart_limit
+        terminated = False
         truncated = self.step_count >= self.max_steps
 
         return obs, reward, terminated, truncated, {}
