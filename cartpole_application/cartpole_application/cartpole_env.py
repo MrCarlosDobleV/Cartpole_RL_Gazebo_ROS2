@@ -13,7 +13,7 @@ class GazeboCartPoleEnv(gym.Env):
 
         # ---- RL parameters ----
         self.dt = 0.02
-        self.max_vel = 5.0
+        self.max_vel = 500.0
         self.max_steps = 1000
         self.step_count = 0
 
