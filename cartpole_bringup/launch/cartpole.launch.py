@@ -29,7 +29,7 @@ def generate_launch_description():
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
         launch_arguments={
-            'gz_args': world_path
+            'gz_args': f'{world_path} -v 4'
         }.items(),
     )
 

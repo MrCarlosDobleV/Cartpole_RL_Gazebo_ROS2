@@ -54,18 +54,20 @@ class GazeboCartPoleEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
-
         self.step_count = 0
 
-        self.node.apply_force(0.0)
+        # 1) Stop cart force
+        self.node.stop_cart(steps=50)
 
-        # Let the system settle
-        for _ in range(5):
-            
+        # 2) Let physics settle (pole damping)
+        for _ in range(30):
             rclpy.spin_once(self.node, timeout_sec=0.05)
 
+        # 3) Read initial observation
         obs = np.array(self.node.get_state(), dtype=np.float32)
         return obs, {}
+
+
 
     def step(self, action):
         self.step_count += 1

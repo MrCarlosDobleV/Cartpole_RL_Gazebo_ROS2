@@ -1,3 +1,4 @@
+import time
 import rclpy
 from rclpy.node import Node
 
@@ -53,3 +54,19 @@ class CartPoleROSNode(Node):
         msg = Float64()
         msg.data = float(force)
         self.force_pub.publish(msg)
+
+    
+    def stop_cart(self, steps=50):
+        zero = Float64()
+        zero.data = 0.0
+
+        for _ in range(steps):
+            self.force_pub.publish(zero)
+            rclpy.spin_once(self, timeout_sec=0.02)
+
+
+
+
+
+
+

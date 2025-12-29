@@ -18,6 +18,9 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-gymnasium</exec_depend>
+  <exec_depend>python3-ignition-transport</exec_depend>
+  <exec_depend>python3-ignition-msgs</exec_depend>
+
 
   <export>
     <build_type>ament_python</build_type>
