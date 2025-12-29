@@ -16,4 +16,6 @@ for episode in range(3):
             print("Episode ended")
             break
 
+obs, _ = env.reset()
+
 env.close()

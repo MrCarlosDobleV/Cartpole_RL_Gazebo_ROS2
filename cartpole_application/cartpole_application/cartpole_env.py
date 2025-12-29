@@ -13,15 +13,15 @@ class GazeboCartPoleEnv(gym.Env):
 
         # ---- RL parameters ----
         self.dt = 0.02
-        self.max_force = 10.0
+        self.max_vel = 5.0
         self.max_steps = 1000
         self.step_count = 0
         self.cart_limit = 2.4
 
         # ---- Action space (continuous) ----
         self.action_space = gym.spaces.Box(
-            low=-self.max_force,
-            high=self.max_force,
+            low=-self.max_vel,
+            high=self.max_vel,
             shape=(1,),
             dtype=np.float32,
         )
@@ -72,8 +72,8 @@ class GazeboCartPoleEnv(gym.Env):
     def step(self, action):
         self.step_count += 1
 
-        force = float(np.clip(action[0], -self.max_force, self.max_force))
-        self.node.apply_force(force)
+        vel = float(np.clip(action[0], -self.max_vel, self.max_vel))
+        self.node.apply_vel(vel)
 
         rclpy.spin_once(self.node, timeout_sec=self.dt)
 
@@ -84,7 +84,7 @@ class GazeboCartPoleEnv(gym.Env):
         # ---- Reward (simple swing-up style) ----
         reward = -np.cos(theta)          # swing-up objective
         reward -= 0.01 * x**2            # keep cart centered
-        reward -= 0.001 * force**2       # energy penalty
+        reward -= 0.001 * vel**2       # energy penalty
 
 
         # ---- Termination ----

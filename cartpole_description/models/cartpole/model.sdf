@@ -136,9 +136,10 @@
       filename="libignition-gazebo-joint-controller-system.so"
       name="ignition::gazebo::systems::JointController">
       <joint_name>cart_slide</joint_name>
-      <use_force>true</use_force>
-      <topic>/cart_force</topic>
+      <initial_velocity>0</initial_velocity>
+      <topic>/cart_vel</topic>
     </plugin>
+
 
     <!-- ================= JOINT STATE PUBLISHER ================= -->
     <plugin

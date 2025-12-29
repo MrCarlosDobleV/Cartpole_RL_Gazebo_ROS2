@@ -21,10 +21,10 @@ class CartPoleROSNode(Node):
             10
         )
 
-        # Publish force command
-        self.force_pub = self.create_publisher(
+        # Publish velocity command
+        self.vel_pub = self.create_publisher(
             Float64,
-            "/cart_force",
+            "/cart_vel",
             10
         )
 
@@ -50,10 +50,10 @@ class CartPoleROSNode(Node):
 
         return x, x_dot, theta, theta_dot
 
-    def apply_force(self, force: float):
+    def apply_vel(self, vel: float):
         msg = Float64()
-        msg.data = float(force)
-        self.force_pub.publish(msg)
+        msg.data = float(vel)
+        self.vel_pub.publish(msg)
 
     
     def stop_cart(self, steps=50):
@@ -61,7 +61,7 @@ class CartPoleROSNode(Node):
         zero.data = 0.0
 
         for _ in range(steps):
-            self.force_pub.publish(zero)
+            self.vel_pub.publish(zero)
             rclpy.spin_once(self, timeout_sec=0.02)
 
 
