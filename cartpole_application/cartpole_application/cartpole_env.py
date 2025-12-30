@@ -13,13 +13,13 @@ class GazeboCartPoleEnv(gym.Env):
 
         # ---- RL parameters ----
         self.dt = 0.02
-        self.max_vel = 500.0
+        self.max_vel = 15.0
         self.max_steps = 1000
         self.step_count = 0
 
         self.rail_soft_limit = 2.8     # start penalizing here
         self.rail_hard_limit = 3.0     # physical rail
-        self.rail_penalty_scale = 20.0 # strength
+        self.rail_penalty_scale = 50.0 # strength
 
 
         # ---- Action space (continuous) ----
@@ -87,8 +87,8 @@ class GazeboCartPoleEnv(gym.Env):
 
         # ---- Reward (simple swing-up style) ----
         reward = -np.cos(theta)          # swing-up objective
-        reward -= 0.01 * x**2            # keep cart centered
-        reward -= 0.001 * vel**2       # energy penalty
+        reward -= 0.1 * x**2            # keep cart centered
+        reward -= 0.0001 * vel**2       # energy penalty
 
 
         # ---- Rail penalty (soft, no termination) ----

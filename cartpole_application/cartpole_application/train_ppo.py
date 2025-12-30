@@ -1,6 +1,7 @@
 import time
 import gymnasium as gym
 from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import CheckpointCallback
 
 from cartpole_application.cartpole_env import GazeboCartPoleEnv
 
@@ -21,10 +22,18 @@ def main():
         clip_range=0.2,
     )
 
+    checkpoint_dir = "./tb_cartpole/checkpoints"
+    checkpoint_callback = CheckpointCallback(
+        save_freq=100_000,
+        save_path=checkpoint_dir,
+        name_prefix="ppo_cartpole"
+    )
+
     print("Starting PPO training...")
     model.learn(
         total_timesteps=1_000_000,
-        tb_log_name="ppo_cartpole"
+        tb_log_name="ppo_cartpole",
+        callback=checkpoint_callback
     )
 
     model.save("ppo_cartpole_final")
