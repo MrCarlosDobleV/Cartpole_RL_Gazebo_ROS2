@@ -65,7 +65,7 @@
           <velocity>15</velocity>
         </limit>
         <dynamics>
-          <damping>0.0</damping>
+          <damping>0.1</damping>
           <friction>0.0</friction>
         </dynamics>
       </axis>
@@ -130,23 +130,26 @@
       </axis>
     </joint>
 
-
-    <!-- ================= JOINT CONTROLLER (REQUIRED FOR PRISMATIC) ================= -->
+    <!-- ================= ROS2 CONTROL ================= -->
     <plugin
-      filename="libignition-gazebo-joint-controller-system.so"
-      name="ignition::gazebo::systems::JointController">
-      <joint_name>cart_slide</joint_name>
-      <initial_velocity>0</initial_velocity>
-      <topic>/cart_vel</topic>
+      filename="libgz_ros2_control-system.so"
+      name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>/home/mypc/cartpole_ws/install/cartpole_bringup/share/cartpole_bringup/config/ros2_control.yaml</parameters>
     </plugin>
 
-
-    <!-- ================= JOINT STATE PUBLISHER ================= -->
-    <plugin
-      filename="libignition-gazebo-joint-state-publisher-system.so"
-      name="ignition::gazebo::systems::JointStatePublisher">
-    </plugin>
-
+    <ros2_control name="CartPoleSystem" type="system">
+      <hardware>
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </hardware>
+      <joint name="cart_slide">
+        <command_interface name="velocity">
+          <param name="min">-15</param>
+          <param name="max">15</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
 
   </model>
 </sdf>

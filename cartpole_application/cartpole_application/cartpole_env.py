@@ -14,7 +14,7 @@ class GazeboCartPoleEnv(gym.Env):
         # ---- RL parameters ----
         self.dt = 0.02
         self.max_vel = 15.0
-        self.max_steps = 1000
+        self.max_steps = 1500
         self.step_count = 0
 
         self.rail_soft_limit = 2.8     # start penalizing here

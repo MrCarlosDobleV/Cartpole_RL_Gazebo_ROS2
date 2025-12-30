@@ -4,6 +4,7 @@ from rclpy.node import Node
 
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
+from std_msgs.msg import Float64MultiArray
 
 
 class CartPoleROSNode(Node):
@@ -21,10 +22,10 @@ class CartPoleROSNode(Node):
             10
         )
 
-        # Publish velocity command
+        # Publish velocity command (ros2_control controller)
         self.vel_pub = self.create_publisher(
-            Float64,
-            "/cart_vel",
+            Float64MultiArray,
+            "/cart_velocity_controller/commands",
             10
         )
 
@@ -51,19 +52,18 @@ class CartPoleROSNode(Node):
         return x, x_dot, theta, theta_dot
 
     def apply_vel(self, vel: float):
-        msg = Float64()
-        msg.data = float(vel)
+        msg = Float64MultiArray()
+        msg.data = [float(vel)]
         self.vel_pub.publish(msg)
 
     
-    def stop_cart(self, steps=50):
-        zero = Float64()
-        zero.data = 0.0
+    def stop_cart(self, steps=100):
+        zero = Float64MultiArray()
+        zero.data = [0.0]
 
         for _ in range(steps):
             self.vel_pub.publish(zero)
             rclpy.spin_once(self, timeout_sec=0.02)
-
 
 
 

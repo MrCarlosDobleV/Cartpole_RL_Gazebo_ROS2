@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot name="cartpole">
+  <link name="rail"/>
+
+  <link name="cart">
+    <inertial>
+      <mass value="2.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.05" ixy="0" ixz="0" iyy="0.05" iyz="0" izz="0.05"/>
+    </inertial>
+  </link>
+
+  <joint name="cart_slide" type="prismatic">
+    <parent link="rail"/>
+    <child link="cart"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-3" upper="3" effort="500" velocity="15"/>
+    <dynamics damping="0.1"/>
+  </joint>
+
+  <link name="pole">
+    <inertial>
+      <mass value="0.3"/>
+      <origin xyz="0 0 -0.5" rpy="0 0 0"/>
+      <inertia ixx="0.025" ixy="0" ixz="0" iyy="0.025" iyz="0" izz="0.000125"/>
+    </inertial>
+  </link>
+
+  <joint name="pole_hinge" type="revolute">
+    <parent link="cart"/>
+    <child link="pole"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="100" velocity="10"/>
+    <dynamics damping="0.1"/>
+  </joint>
+
+  <ros2_control name="CartPoleSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="cart_slide">
+      <command_interface name="velocity">
+        <param name="min">-15</param>
+        <param name="max">15</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="pole_hinge">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+</robot>
