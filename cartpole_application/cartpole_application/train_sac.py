@@ -14,14 +14,7 @@ def main():
         policy="MlpPolicy",
         env=env,
         verbose=1,
-        tensorboard_log="./tb_cartpole/",
-        learning_rate=3e-4,
-        buffer_size=200_000,
-        batch_size=256,
-        gamma=0.99,
-        tau=0.005,
-        train_freq=1,
-        gradient_steps=1,
+        tensorboard_log="./tb_cartpole/"
     )
 
     checkpoint_dir = "./tb_cartpole/checkpoints"
@@ -35,7 +28,8 @@ def main():
     model.learn(
         total_timesteps=1_000_000,
         tb_log_name="sac_cartpole",
-        callback=checkpoint_callback
+        callback=checkpoint_callback,
+        log_interval=1
     )
 
     model.save("sac_cartpole_final")

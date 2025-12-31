@@ -13,7 +13,7 @@ class GazeboCartPoleEnv(gym.Env):
 
         # ---- RL parameters ----
         self.dt = 0.02
-        self.max_vel = 15.0
+        self.max_vel = 10.0
         self.max_steps = 1500
         self.step_count = 0
 
@@ -85,17 +85,20 @@ class GazeboCartPoleEnv(gym.Env):
         x, x_dot, theta, theta_dot = self.node.get_state()
         obs = np.array([x, x_dot, theta, theta_dot], dtype=np.float32)
 
-        # ---- Reward (simple swing-up style) ----
-        reward = -np.cos(theta)          # swing-up objective
-        reward -= 0.1 * x**2            # keep cart centered
-        reward -= 0.0001 * vel**2       # energy penalty
+        # ---- Reward (upright at ±pi) ----
+        theta_err = (theta + np.pi) % (2 * np.pi) - np.pi  # wrap to [-pi, pi]
+        upright_err = np.pi - abs(theta_err)               # 0 when upright at ±pi
 
+        reward = 1.0 - 0.5 * (upright_err ** 2)            # strong upright bonus
+        reward -= 0.02 * theta_dot**2                      # reduce swinging
+        reward -= 0.01 * x**2                              # keep cart centered
+        reward -= 0.0001 * vel**2                          # energy penalty
 
         # ---- Rail penalty (soft, no termination) ----
         rail_violation = max(0.0, abs(x) - self.rail_soft_limit)
         rail_penalty = self.rail_penalty_scale * rail_violation**2
-
         reward -= rail_penalty
+
 
 
         # ---- Termination ----
